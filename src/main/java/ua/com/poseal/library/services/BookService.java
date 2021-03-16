@@ -1,55 +1,60 @@
 package ua.com.poseal.library.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.poseal.library.models.Book;
+import ua.com.poseal.library.repositories.BookRepository;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
 
+    private BookRepository bookRepository;
+
+    @Autowired
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
     public List<Book> getAll() {
-        Book book1 = new Book();
-        book1.setName("Name");
-        book1.setAuthor("Author");
-        book1.setDescription("Description");
-        book1.setPublisher("Publisher");
-        book1.setIsbn("ISBN");
-        book1.setYear(2021);
+        Iterator<Book> iterator = bookRepository.findAll().iterator();
+        List<Book> books = new ArrayList<>();
 
-        Book book2 = new Book();
-        book2.setName("Name");
-        book2.setAuthor("Author");
-        book2.setDescription("Description");
-        book2.setPublisher("Publisher");
-        book2.setIsbn("ISBN");
-        book2.setYear(2021);
-
-        return Arrays.asList(book1, book2);
+        while (iterator.hasNext()) {
+            books.add(iterator.next());
+        }
+        return books;
     }
 
     public Book get(Long id) {
-        Book book = new Book();
-        book.setName("Name");
-        book.setAuthor("Author");
-        book.setDescription("Description");
-        book.setPublisher("Publisher");
-        book.setIsbn("ISBN");
-        book.setYear(2021);
-
-        return book;
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent()) {
+            return book.get();
+        }
+        throw new RuntimeException("Book not found");
     }
 
     public Book create(Book book) {
-        return book;
+        return bookRepository.save(book);
     }
 
     public Book update(Long id, Book book) {
-        return book;
+        Book bookFromDB = get(id);
+        bookFromDB.setName(book.getName());
+        bookFromDB.setAuthor(book.getAuthor());
+        bookFromDB.setDescription(book.getDescription());
+        bookFromDB.setPublisher(book.getPublisher());
+        bookFromDB.setIsbn(book.getIsbn());
+        bookFromDB.setYear(book.getYear());
+
+        return bookRepository.save(bookFromDB);
     }
 
     public void delete(Long id) {
-
+        bookRepository.deleteById(id);
     }
 }
