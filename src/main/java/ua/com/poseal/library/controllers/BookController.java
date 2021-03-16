@@ -1,32 +1,44 @@
 package ua.com.poseal.library.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ua.com.poseal.library.models.Book;
+import ua.com.poseal.library.services.BookService;
+
+import java.util.List;
 
 @RestController
 public class BookController {
 
+    private BookService bookService;
+
+    @Autowired
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+
     @GetMapping("/book")
-    public String getAllBooks() {
-        return "All the books";
+    public List<Book> getAllBooks() {
+        return bookService.getAll();
     }
 
     @GetMapping("/book/{id}")
-    public String getBookById(@PathVariable Long id) {
-        return "Book:" + id;
+    public Book getBookById(@PathVariable Long id) {
+        return bookService.get(id);
     }
 
     @PostMapping("/book")
-    public String createBook() {
-        return "Created the book";
+    public Book createBook(@RequestBody Book book) {
+        return bookService.create(book);
     }
 
     @PutMapping("/book/{id}")
-    public String editBook(@PathVariable Long id) {
-        return "Updated Book:" + id;
+    public Book editBook(@PathVariable Long id, @RequestBody Book book) {
+        return bookService.update(id, book);
     }
 
     @DeleteMapping("/book/{id}")
-    public String deleteBook(@PathVariable Long id) {
-        return "Book " + id + " was deleted";
+    public void deleteBook(@PathVariable Long id) {
+        bookService.delete(id);
     }
 }
