@@ -1,13 +1,12 @@
 package ua.com.poseal.library.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.poseal.library.models.Book;
 import ua.com.poseal.library.repositories.BookRepository;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,14 +19,12 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getAll() {
-        Iterator<Book> iterator = bookRepository.findAll().iterator();
-        List<Book> books = new ArrayList<>();
-
-        while (iterator.hasNext()) {
-            books.add(iterator.next());
+    public Page<Book> getAll(String query, Pageable pageable) {
+        if (query != null) {
+            return bookRepository.findByQuery("%" + query.toLowerCase() + "%", pageable);
         }
-        return books;
+        Page<Book> page = bookRepository.findAll(pageable);
+        return page;
     }
 
     public Book get(Long id) {

@@ -1,11 +1,12 @@
 package ua.com.poseal.library.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ua.com.poseal.library.models.Book;
 import ua.com.poseal.library.services.BookService;
-
-import java.util.List;
 
 @RestController
 public class BookController {
@@ -18,8 +19,11 @@ public class BookController {
     }
 
     @GetMapping("/book")
-    public List<Book> getAllBooks() {
-        return bookService.getAll();
+    public Page<Book> getAllBooks(@RequestParam Integer page,
+                                  @RequestParam Integer size,
+                                  @RequestParam(required = false) String query) {
+        Pageable pageable = PageRequest.of(page, size);
+        return bookService.getAll(query, pageable);
     }
 
     @GetMapping("/book/{id}")
