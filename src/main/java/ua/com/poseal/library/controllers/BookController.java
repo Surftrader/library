@@ -6,8 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ua.com.poseal.library.dto.BookDTO;
 import ua.com.poseal.library.models.Book;
 import ua.com.poseal.library.services.BookService;
+
+import javax.validation.Valid;
 
 @RestController
 public class BookController {
@@ -34,13 +37,13 @@ public class BookController {
 
     @PostMapping("/book")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Book createBook(@RequestBody Book book) {
-        return bookService.create(book);
+    public Book createBook(@Valid @RequestBody BookDTO bookDTO) {
+        return bookService.create(bookDTO);
     }
 
     @PutMapping("/book/{id}")
-    public Book editBook(@PathVariable Long id, @RequestBody Book book) {
-        return bookService.update(id, book);
+    public Book editBook(@PathVariable Long id, @Valid @RequestBody BookDTO bookDTO) {
+        return bookService.update(id, bookDTO);
     }
 
     @DeleteMapping("/book/{id}")

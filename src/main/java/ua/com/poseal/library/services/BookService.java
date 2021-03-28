@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ua.com.poseal.library.dto.BookDTO;
+import ua.com.poseal.library.exeptions.NotFoundException;
 import ua.com.poseal.library.models.Book;
 import ua.com.poseal.library.repositories.BookRepository;
 
@@ -32,21 +34,22 @@ public class BookService {
         if (book.isPresent()) {
             return book.get();
         }
-        throw new RuntimeException("Book not found");
+        throw new NotFoundException("Book not found");
     }
 
-    public Book create(Book book) {
+    public Book create(BookDTO bookDTO) {
+        Book book = new Book(bookDTO);
         return bookRepository.save(book);
     }
 
-    public Book update(Long id, Book book) {
+    public Book update(Long id, BookDTO bookDTO) {
         Book bookFromDB = get(id);
-        bookFromDB.setName(book.getName());
-        bookFromDB.setAuthor(book.getAuthor());
-        bookFromDB.setDescription(book.getDescription());
-        bookFromDB.setPublisher(book.getPublisher());
-        bookFromDB.setIsbn(book.getIsbn());
-        bookFromDB.setYear(book.getYear());
+        bookFromDB.setName(bookDTO.getName());
+        bookFromDB.setAuthor(bookDTO.getAuthor());
+        bookFromDB.setDescription(bookDTO.getDescription());
+        bookFromDB.setPublisher(bookDTO.getPublisher());
+        bookFromDB.setIsbn(bookDTO.getIsbn());
+        bookFromDB.setYear(bookDTO.getYear());
 
         return bookRepository.save(bookFromDB);
     }
