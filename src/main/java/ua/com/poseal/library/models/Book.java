@@ -3,12 +3,12 @@ package ua.com.poseal.library.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import ua.com.poseal.library.dto.BookDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,6 +25,11 @@ public class Book {
     private String publisher;
     private String isbn;
     private Integer year;
+
+    private boolean available = true;
+    @OneToMany(mappedBy = "book")
+    @ToString.Exclude
+    private List<BookHistory> bookHistories = new ArrayList<>();
 
     public Book(BookDTO bookDTO) {
 

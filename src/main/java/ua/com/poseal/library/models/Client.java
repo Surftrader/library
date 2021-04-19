@@ -2,12 +2,12 @@ package ua.com.poseal.library.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import ua.com.poseal.library.dto.ClientDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,6 +22,10 @@ public class Client {
     private String lastName;
     private String email;
     private String phone;
+
+    @OneToMany(mappedBy = "client")
+    @ToString.Exclude
+    private List<BookInUse> bookInUses = new ArrayList<>();
 
     public Client(ClientDTO dto) {
         firstName = dto.getFirstName();
