@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ua.com.poseal.library.exeptions.ConflictException;
 import ua.com.poseal.library.exeptions.NotFoundException;
 
 import java.util.*;
@@ -38,12 +39,24 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+        HttpStatus code = HttpStatus.NOT_FOUND;
+        Map<String, Object> body = fillMapException(ex, code);
+        return new ResponseEntity<>(body, code);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Object> handleConflictException(ConflictException ex) {
+        HttpStatus code = HttpStatus.CONFLICT;
+        Map<String, Object> body = fillMapException(ex, code);
+        return new ResponseEntity<>(body, code);
+    }
+
+    private Map<String, Object> fillMapException(RuntimeException ex, HttpStatus code) {
         Map<String, Object> body = new HashMap<String, Object>(){{
             put("timestamp", new Date());
-            put("status", HttpStatus.NOT_FOUND);
+            put("status", code);
             put("errors", Arrays.asList(ex.getMessage()));
         }};
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return body;
     }
 }
