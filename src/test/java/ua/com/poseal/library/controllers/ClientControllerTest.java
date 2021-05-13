@@ -53,7 +53,8 @@ class ClientControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content.[*].firstName", containsInAnyOrder(testDTO1.getFirstName(), testDTO2.getFirstName())))
-                .andExpect(jsonPath("$.content.[*].phone", containsInAnyOrder(testDTO1.getPhone(), testDTO2.getPhone())));
+                .andExpect(jsonPath("$.content.[*].phone", containsInAnyOrder(testDTO1.getPhone(), testDTO2.getPhone())))
+                .andExpect(jsonPath("$.content.[*].bookInUses").doesNotExist());
 
         // get page with filter by name
         mockMvc.perform(get("/client")

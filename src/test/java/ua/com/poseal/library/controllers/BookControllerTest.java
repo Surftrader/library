@@ -66,7 +66,8 @@ class BookControllerTest extends AbstractControllerTest {
                 .param("size", "1")
                 .param("query", knownAuthor))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content.[*].bookHistories").doesNotExist());
     }
 
     @Test
