@@ -1,4 +1,4 @@
-package ua.com.poseal.library.controllers;
+package ua.com.poseal.library.config;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
