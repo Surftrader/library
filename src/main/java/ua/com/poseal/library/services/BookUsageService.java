@@ -2,6 +2,7 @@ package ua.com.poseal.library.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ua.com.poseal.library.exeptions.NotFoundException;
 import ua.com.poseal.library.models.Book;
@@ -12,6 +13,7 @@ import ua.com.poseal.library.repositories.BookHistoryRepository;
 import ua.com.poseal.library.repositories.BookInUseRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -23,6 +25,14 @@ public class BookUsageService {
     private final ClientService clientService;
     private final BookHistoryRepository bookHistoryRepository;
     private final BookInUseRepository bookInUseRepository;
+    private final TimeService timeService;
+
+    @Value("${time.expired.after}")
+    private Integer expiredAfterDays;
+
+    public List<BookInUse> getExpiredBooks(Integer minExpiredDays) {
+        return bookInUseRepository.findByInUseFromBefore(timeService.currentDate().minusDays(minExpiredDays));
+    }
 
     public BookInUse takeBook(Long clientId, Long bookId) {
         Client client = clientService.get(clientId);

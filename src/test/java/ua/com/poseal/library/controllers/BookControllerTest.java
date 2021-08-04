@@ -2,7 +2,6 @@ package ua.com.poseal.library.controllers;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import ua.com.poseal.library.AbstractControllerTest;
 import ua.com.poseal.library.dto.BookDTO;
@@ -11,7 +10,6 @@ import ua.com.poseal.library.models.Book;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,12 +19,9 @@ class BookControllerTest extends AbstractControllerTest {
     @Test
     void createBook() throws Exception {
         BookDTO testBook = mockBook();
-        String json = objectMapper.writeValueAsString(testBook);
 
         MvcResult mvcResult =
-                mockMvc.perform(post("/book")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                createBook(testBook)
                         .andDo(print())
                         .andExpect(status().isCreated())
                         .andReturn();
@@ -44,11 +39,8 @@ class BookControllerTest extends AbstractControllerTest {
     @Test
     void findBook() throws Exception {
         BookDTO testBook = mockBook();
-        String json = objectMapper.writeValueAsString(testBook);
 
-        mockMvc.perform(post("/book")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+        createBook(testBook)
                 .andDo(print())
                 .andExpect(status().isCreated());
 
@@ -76,9 +68,7 @@ class BookControllerTest extends AbstractControllerTest {
         testBook.setName(null);
         testBook.setAuthor("");
 
-        mockMvc.perform(post("/book")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testBook)))
+        createBook(testBook)
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status", equalTo(HttpStatus.BAD_REQUEST.name())))
@@ -87,9 +77,7 @@ class BookControllerTest extends AbstractControllerTest {
         testBook = mockBook();
         testBook.setIsbn("wrong format");
 
-        mockMvc.perform(post("/book")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testBook)))
+        createBook(testBook)
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status", equalTo(HttpStatus.BAD_REQUEST.name())))
@@ -105,17 +93,5 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status", equalTo(HttpStatus.NOT_FOUND.name())))
                 .andExpect(jsonPath("$.errors", contains("Book not found")));
-    }
-
-    private BookDTO mockBook() {
-        BookDTO testBook = new BookDTO();
-        testBook.setName("Test name");
-        testBook.setDescription("Test description");
-        testBook.setAuthor("Test author");
-        testBook.setPublisher("Test publisher");
-        testBook.setYear(2021);
-        testBook.setIsbn("978-617-7863-09-9");
-
-        return testBook;
     }
 }

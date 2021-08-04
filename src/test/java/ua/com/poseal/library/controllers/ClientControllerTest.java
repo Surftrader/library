@@ -2,14 +2,12 @@ package ua.com.poseal.library.controllers;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import ua.com.poseal.library.AbstractControllerTest;
 import ua.com.poseal.library.dto.ClientDTO;
 import ua.com.poseal.library.models.Client;
-import ua.com.poseal.library.repositories.ClientRepository;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -18,9 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ClientControllerTest extends AbstractControllerTest {
-
-    @Autowired
-    private ClientRepository clientRepository;
 
     @AfterEach
     void clearAfter() {
@@ -134,9 +129,7 @@ class ClientControllerTest extends AbstractControllerTest {
         clientDTO.setEmail("wrong format");
         clientDTO.setPhone("099-999-99-99");
 
-        mockMvc.perform(post("/client")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clientDTO)))
+        createClient(clientDTO)
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.name())))
@@ -153,9 +146,7 @@ class ClientControllerTest extends AbstractControllerTest {
         ClientDTO clientDTO = mockClient();
         createAndAssert(clientDTO);
 
-        mockMvc.perform(post("/client")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(clientDTO)))
+        createClient(clientDTO)
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status", is(HttpStatus.CONFLICT.name())))
@@ -164,21 +155,8 @@ class ClientControllerTest extends AbstractControllerTest {
                 )));
     }
 
-    private ClientDTO mockClient() {
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setFirstName("Ivan");
-        clientDTO.setLastName("Mazepa");
-        clientDTO.setEmail("ivan@gmail.com");
-        clientDTO.setPhone("+380671234567");
-
-        return clientDTO;
-    }
-
     private Client createAndAssert(ClientDTO testDTO) throws Exception {
-        MvcResult mvcResult = mockMvc
-                .perform(post("/client")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testDTO)))
+        MvcResult mvcResult = createClient(testDTO)
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", not(nullValue())))
                 .andExpect(jsonPath("$.firstName", is(testDTO.getFirstName())))
