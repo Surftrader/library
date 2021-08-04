@@ -1,5 +1,6 @@
 package ua.com.poseal.library.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import ua.com.poseal.library.models.Book;
 import ua.com.poseal.library.models.BookInUse;
@@ -13,5 +14,6 @@ public interface BookInUseRepository extends PagingAndSortingRepository<BookInUs
 
     Optional<BookInUse> findByClientAndBook(Client client, Book book);
 
+    @EntityGraph(attributePaths = {"client", "book"})
     List<BookInUse> findByInUseFromBefore(LocalDate inUseFromBefore);
 }
