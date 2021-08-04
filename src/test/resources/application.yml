@@ -2,6 +2,10 @@ spring:
   datasource:
     url: jdbc:tc:postgresql:9.6.8:///devdb
 
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+
 time:
   expired:
     after: 14

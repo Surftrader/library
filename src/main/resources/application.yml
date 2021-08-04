@@ -4,6 +4,10 @@ spring:
     username: postgres
     password: root
 
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+
 time:
   expired:
     after: 14
