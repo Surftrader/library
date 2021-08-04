@@ -3,3 +3,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/devdb
     username: postgres
     password: root
+
+time:
+  expired:
+    after: 14
